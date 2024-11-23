@@ -1,7 +1,7 @@
 mod subscriber;
 
 pub use subscriber::init_test_subscriber;
-use tracing::{error, event, field, info, span, Level};
+use tracing::{field, span, Level};
 
 /// Given a list of order numbers, compute the total price.
 ///
