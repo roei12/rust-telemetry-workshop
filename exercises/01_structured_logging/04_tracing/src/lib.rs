@@ -6,6 +6,7 @@
 mod subscriber;
 
 pub use subscriber::init_test_subscriber;
+use tracing::{span, Level};
 
 /// Given a list of order numbers, compute the total price.
 ///
@@ -16,9 +17,16 @@ pub use subscriber::init_test_subscriber;
 ///
 /// Refer to the test files for the expected output format.
 pub fn get_total(order_numbers: &[u64]) -> Result<u64, anyhow::Error> {
-    // Tip: use `tracing::info_span!` to create a new span.
-    // You'll have to learn about the *RAII guard* pattern!
-    todo!()
+    let span = span!(Level::INFO, "process total price");
+    let _enter = span.enter();
+
+    let mut sum = 0u64;
+
+    for order in order_numbers {
+        sum += get_order_details(*order)?.price;
+    }
+
+    Ok(sum)
 }
 
 pub struct OrderDetails {
@@ -28,6 +36,9 @@ pub struct OrderDetails {
 
 /// A dummy function to simulate what would normally be a database query.
 fn get_order_details(order_number: u64) -> Result<OrderDetails, anyhow::Error> {
+    let span = span!(Level::INFO, "retrieve order");
+    let _enter = span.enter();
+
     if order_number % 4 == 0 {
         Err(anyhow::anyhow!("Failed to talk to the database"))
     } else {
